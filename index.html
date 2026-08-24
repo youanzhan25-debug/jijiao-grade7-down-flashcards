@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>冀教版七年级下册单词闪卡</title>
+<style>
+:root{
+  --bg1:#0f1b2d; --bg2:#1b2f4e;
+  --card:#fdf6ec; --card-edge:#e8dcc8;
+  --ink:#24344d; --sub:#6b7a92;
+  --acc:#ff7a3d; --acc-deep:#e85d1f;
+  --gold:#d9a441;
+  --ok:#2ecc71;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{max-width:100%;overflow-x:hidden;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  background:radial-gradient(120% 90% at 15% 0%,var(--bg2) 0%,var(--bg1) 55%,#0a1522 100%);
+  min-height:100vh;color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;
+  padding:env(safe-area-inset-top) 12px calc(env(safe-area-inset-bottom) + 12px);
+}
+.wrap{width:100%;max-width:520px;display:flex;flex-direction:column;flex:1;}
+
+/* ---------- 头部 ---------- */
+header{text-align:center;padding:14px 0 10px;}
+header h1{
+  font-size:19px;font-weight:800;letter-spacing:1px;color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+header h1 .dot{color:var(--acc);}
+header p{font-size:12px;color:#9fb2cc;margin-top:4px;}
+
+/* ---------- 工具条 ---------- */
+.toolbar{display:flex;gap:8px;align-items:center;margin:10px 0 8px;flex-wrap:nowrap;}
+.btn{
+  border:none;border-radius:12px;padding:9px 12px;font-size:13px;font-weight:600;
+  background:rgba(255,255,255,.08);color:#dfe9f5;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  transition:transform .12s,background .15s;
+}
+.btn:active{transform:scale(.94);}
+.btn.on{background:var(--acc);color:#fff;}
+.spacer{flex:1;}
+.icon-btn{width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;}
+
+/* 分类 chips 横向滚动 */
+.chips{
+  display:flex;gap:8px;overflow-x:auto;padding:6px 2px 8px;margin:0 -2px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  flex:0 0 auto;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);
+  color:#c8d6e8;border-radius:999px;padding:7px 13px;font-size:12.5px;cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700;}
+
+/* ---------- 卡片 ---------- */
+.stage{display:flex;justify-content:center;perspective:1400px;margin:8px 0 4px;}
+.card-scene{position:relative;width:100%;max-width:460px;height:min(52vh,430px);min-height:300px;transform-style:preserve-3d;}
+.card{
+  position:absolute;inset:0;border-radius:26px;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.1,.2,1);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:0 18px 45px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.06) inset;
+}
+.card.flip{transform:rotateY(180deg);}
+.face{
+  position:absolute;inset:0;border-radius:26px;padding:22px;
+  display:flex;flex-direction:column;
+  background:linear-gradient(165deg,#fffdf7 0%,var(--card) 55%,#f3e8d2 100%);
+  border:1px solid var(--card-edge);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.face.back{transform:rotateY(180deg);background:linear-gradient(165deg,#fffaf0 0%,#fdf0da 60%,#f7e3c4 100%);}
+
+.face .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.tag{
+  font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;
+  background:rgba(26,74,135,.09);color:#3a5a86;letter-spacing:.3px;
+}
+.tag.acc{background:rgba(255,122,61,.14);color:var(--acc-deep);}
+
+.face .main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;overflow:hidden;}
+.card-img{
+  flex:none;width:min(62%,240px);aspect-ratio:1/1;margin:2px auto 12px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:18px;background:linear-gradient(160deg,#fff 0%,#f1e7d3 100%);
+  border:1px solid rgba(217,164,65,.35);overflow:hidden;
+}
+.card-emoji{font-size:clamp(70px,18vw,110px);line-height:1;user-select:none;}
+.card-img img.hide,.card-emoji.hide{display:none;}
+.card-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transform:scale(1.3);
+  transform-origin:center;
+}
+.card-img.hide{display:none;}
+.watermark{
+  text-align:center;font-size:8.5px;line-height:1.5;letter-spacing:.5px;
+  color:rgba(90,70,35,.20);margin:2px 0 6px;user-select:none;
+}
+.watermark.hide{display:none;}
+.face .l3en,.face .l3zh{font-weight:800;word-break:break-word;line-height:1.3;}
+.face .l3en{font-size:clamp(24px,6vw,34px);color:var(--ink);}
+.face .l3zh{font-size:clamp(30px,7.5vw,44px);color:var(--ink);}
+.face .hint{font-size:12px;color:var(--sub);margin-top:12px;}
+
+.path{
+  margin-top:auto;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.65);
+  border:1px dashed rgba(217,164,65,.55);text-align:center;
+}
+.path .pl{font-size:12px;color:var(--sub);margin-bottom:4px;letter-spacing:1px;}
+.path .pv{font-size:15px;font-weight:700;color:#5a4a20;line-height:1.5;word-break:break-word;}
+.path .pv .arrow{color:var(--gold);margin:0 5px;font-weight:900;}
+
+.face:not(.back) .path{display:none;}
+.speaker{
+  position:absolute;bottom:14px;right:14px;z-index:5;
+  width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--acc);color:#fff;font-size:19px;
+  box-shadow:0 6px 16px rgba(232,93,31,.45);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .12s;
+}
+.speaker:active{transform:scale(.9);}
+.speaker.speaking{animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,122,61,.55);}50%{box-shadow:0 0 0 14px rgba(255,122,61,0);}}
+
+.corner{
+  position:absolute;top:14px;left:16px;font-size:11.5px;font-weight:700;color:var(--sub);letter-spacing:.5px;
+}
+
+/* ---------- 进度 ---------- */
+.progress{margin:14px 0 4px;}
+.progress .pbar{height:6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;}
+.progress .pfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),var(--gold));transition:width .25s;width:0;}
+.progress .ptext{display:flex;justify-content:space-between;font-size:11.5px;color:#9fb2cc;margin-top:6px;}
+
+/* ---------- 底部操作 ---------- */
+.controls{display:flex;align-items:center;gap:10px;margin-top:10px;}
+.ctrl-btn{
+  flex:1;border:none;border-radius:16px;padding:14px 0;font-size:15px;font-weight:700;cursor:pointer;
+  background:rgba(255,255,255,.1);color:#eaf1fa;transition:transform .12s,background .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.ctrl-btn:active{transform:scale(.95);}
+.ctrl-btn.primary{background:linear-gradient(135deg,var(--acc) 0%,var(--acc-deep) 100%);box-shadow:0 8px 20px rgba(232,93,31,.35);}
+.ctrl-btn.small{flex:0 0 auto;width:52px;border-radius:16px;}
+#langBtn{font-size:12px;font-weight:800;letter-spacing:.5px;}
+
+/* ---------- 提示条 ---------- */
+.toast{
+  position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+  background:rgba(20,32,52,.95);color:#fff;padding:10px 18px;border-radius:12px;
+  font-size:13px;opacity:0;pointer-events:none;transition:all .3s;z-index:99;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:86%;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+footer{text-align:center;font-size:11px;color:#5f7290;margin-top:14px;letter-spacing:.5px;}
+.tts-banner{
+  display:flex;align-items:flex-start;gap:8px;margin:8px 0 4px;padding:10px 12px;
+  background:linear-gradient(135deg,#fff7e6 0%,#ffefd2 100%);
+  border:1px solid rgba(217,164,65,.5);border-radius:12px;
+  font-size:12.5px;line-height:1.6;color:#6b5310;
+}
+.tts-banner.hide{display:none;}
+.tts-banner b{color:#a05a00;}
+.tts-banner .x{margin-left:auto;flex:none;background:none;border:none;font-size:14px;color:#a08a55;cursor:pointer;padding:0 2px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>冀教版七下<span class="dot">单词闪卡</span></h1>
+    <p id="statLine">冀教版七年级下册 · 8 个单元 · 358 个单词</p>
+  </header>
+
+  <div class="tts-banner hide" id="ttsBanner">
+    <div>📢 当前浏览器<span style="color:#c0392b">不支持朗读</span>。<br>请在页面右上角点 <b>「···」→「在浏览器中打开」</b>，或用 <b>Safari / Chrome</b> 打开本链接，即可获得英式发音朗读；<b>添加到主屏幕</b>后从图标进入效果最佳。<br>（微信内置浏览器会屏蔽朗读功能）</div>
+    <button class="x" id="ttsClose">✕</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" id="modeBtn" title="切换卡片朝向">EN → 中</button>
+    <button class="btn" id="orderBtn" title="切换顺序/随机">顺序</button>
+    <div class="spacer"></div>
+    <button class="btn icon-btn" id="autoBtn" title="自动播放">▶</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="stage">
+    <div class="card-scene" id="scene">
+      <div class="card" id="card">
+        <div class="face">
+          <span class="corner" id="cornerFront"></span>
+          <div class="tag-row" id="tagsFront"></div>
+          <div class="main">
+            <div class="card-img hide" id="frontImgWrap"><img id="frontImg" alt="" referrerpolicy="no-referrer"><div class="card-emoji hide" id="frontEmoji"></div></div>
+            <div class="l3en" id="frontText"></div><div class="hint" id="frontHint">点击卡片翻面看中文 · 点 🔊 英音朗读</div>
+          </div>
+          <div class="path"><div class="pl" id="frontPathLabel">所属路径</div><div class="pv" id="frontPath"></div></div>
+        </div>
+        <div class="face back">
+          <span class="corner">答案</span>
+          <div class="tag-row" id="tagsBack"></div>
+          <div class="main"><div class="l3zh" id="backText"></div><div class="hint">点击卡片返回 · 点 🔊 朗读</div></div>
+          <div class="path"><div class="pl">所属路径</div><div class="pv" id="backPath"></div></div>
+        </div>
+        <button class="speaker" id="speakBtn" aria-label="朗读">🔊</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark hide" id="watermark"><div>微信/电话：13513443496</div><div>做出口找小詹 · 让外贸更简单</div></div>
+
+  <div class="progress">
+    <div class="pbar"><div class="pfill" id="pfill"></div></div>
+    <div class="ptext"><span id="pcur">0 / 0</span><span id="pinfo"></span></div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn small" id="prevBtn">◀</button>
+    <button class="ctrl-btn primary" id="nextBtn">下一张 ▶</button>
+    <button class="ctrl-btn small" id="langBtn" title="中英文图片转换">中⇄EN</button>
+  </div>
+
+  <footer>数据：冀教版七年级下册单词表（含词性）· 点 🔊 逐词跟读 · 点击卡片翻面 · 右下角按钮中英文图片转换</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+window.CATALOG=[{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"silk","l3zh":"n.丝绸；（蚕）丝","img":"https://s.alicdn.com/@sc04/kf/Hae69e381afed4eaf98b56be277ffdb3aD.png_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"term","l3zh":"n.学期；术语","img":"emoji:📚"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"along","l3zh":"prep.沿着；顺着","img":"emoji:➡️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"lead","l3zh":"v.领路；导致","img":"emoji:🧭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"trip","l3zh":"n.旅行","img":"emoji:🧳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"note","l3zh":"n.正式文件；记录；注释 v.注意；指出","img":"emoji:📝"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"chance","l3zh":"n.机会；可能性；风险","img":"emoji:🎲"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"news","l3zh":"n.消息；新闻","img":"emoji:📰"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"classmate","l3zh":"n.同学","img":"emoji:🧑‍🎓"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"start","l3zh":"v.起程；开始；着手；启动 n.开端；开始","img":"emoji:🏁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"warrior","l3zh":"n.（尤指旧时的）武士；勇士；斗士","img":"emoji:⚔️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"dream","l3zh":"n.梦想；梦 v.做梦；梦见","img":"emoji:💭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"forward","l3zh":"adv.向前地 adj.向前的","img":"emoji:⬆️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"cave","l3zh":"n.山洞；洞穴","img":"emoji:⛰️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"painting","l3zh":"n.绘画；油画","img":"emoji:🎨"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"enough","l3zh":"adj.足够的；充足的 adv.足够地；相当","img":"emoji:✅"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"part","l3zh":"n.部分；角色；零件 v.分开；分离","img":"emoji:🧩"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"drum","l3zh":"n.鼓","img":"https://s.alicdn.com/@sc04/kf/H7a982d7b555d4ac5b242a30f895675c4N.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"tower","l3zh":"n.塔；高架子","img":"emoji:🗼"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"bell","l3zh":"n.钟(声)；铃(声)","img":"emoji:🔔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"later","l3zh":"adv.随后；后来 adj.后来的；以后的","img":"emoji:⏳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"wild","l3zh":"adj.野生的；荒凉的","img":"emoji:🌿"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"goose","l3zh":"n.鹅；鹅肉(pl.geese)","img":"emoji:🪿"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"pagoda","l3zh":"n.佛塔","img":"emoji:🏯"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"delicious","l3zh":"adj.美味的；可口的","img":"emoji:😋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"dish","l3zh":"n.菜肴；盘；盘状物","img":"emoji:🍽️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"bridge","l3zh":"n.桥","img":"emoji:🌉"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"main","l3zh":"adj.主要的；最重要的","img":"emoji:⭐"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit1 A trip to the Silk Road","l2zh":"Unit1 A trip to the Silk Road","l3en":"discover","l3zh":"v.发现；发觉","img":"emoji:🔍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"almost","l3zh":"adv.差不多；几乎","img":"emoji:🔢"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"geography","l3zh":"n.地理；地理学","img":"emoji:🌍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"twice","l3zh":"adv.两次；两倍","img":"emoji:2️⃣"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"social","l3zh":"adj.社会的；社交的","img":"emoji:👥"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"shop","l3zh":"n.手艺；技艺；学科；商店","img":"emoji:🛍️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"success","l3zh":"n.成功的人（或事物）","img":"emoji:🏆"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"event","l3zh":"n.比赛项目；大事","img":"emoji:📅"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"high","l3zh":"adj.高的；上层的","img":"emoji:🚀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"throw","l3zh":"v.投；扔","img":"emoji:🏀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"winner","l3zh":"n.获胜者；成功者","img":"emoji:🏆"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"champion","l3zh":"n.冠军；拥护者","img":"emoji:🏆"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"teammate","l3zh":"n.同队队员；队友","img":"emoji:👥"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"outdoors","l3zh":"adv.在户外","img":"emoji:🌳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"weight","l3zh":"n.重量；重物；体重","img":"emoji:⚖️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"couch","l3zh":"n.长沙发；长榻","img":"https://s.alicdn.com/@sc04/kf/H9fe263e614fb48308db47ebdd9c99b0bR.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"arrive","l3zh":"v.到达；送到；发生","img":"emoji:🏁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"badminton","l3zh":"n.羽毛球运动","img":"https://s.alicdn.com/@sc04/kf/Hd73342ab59054fc7aa6604fb3d717b53b.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"tennis","l3zh":"n.网球","img":"https://s.alicdn.com/@sc04/kf/H3ea37b38f5f64375bf265c48101ecde3j.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"refresh","l3zh":"v.使恢复精力；刷新","img":"emoji:🔄"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"sleepy","l3zh":"adj.困倦的；安静的","img":"emoji:😪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"spend","l3zh":"v.花（时间）；花费","img":"emoji:💸"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"brain","l3zh":"n.脑；智力","img":"emoji:🧠"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"calm","l3zh":"adj.镇静的；沉着的 v.使平静","img":"emoji:😌"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"screen","l3zh":"n.屏幕；荧光屏","img":"emoji:📱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"awake","l3zh":"adj.醒着的 v.(使)醒来","img":"emoji:👀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"bedtime","l3zh":"n.就寝时间","img":"emoji:🌙"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"dark","l3zh":"adj.黑暗的；忧郁的 n.黑暗","img":"emoji:🌑"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"remember","l3zh":"v.记住；纪念","img":"emoji:🧠"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"rise","l3zh":"v.上升；起床；增加","img":"emoji:⬆️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"wealthy","l3zh":"adj.富有的","img":"emoji:💰"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"wise","l3zh":"adj.明智的；英明的","img":"emoji:🦉"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"lifestyle","l3zh":"n.生活方式","img":"emoji:🌿"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit2 Sports and games","l2zh":"Unit2 Sports and games","l3en":"diary","l3zh":"n.日记；记事簿","img":"emoji:📔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"village","l3zh":"n.村庄；村民","img":"emoji:🏡"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"education","l3zh":"n.教育","img":"emoji:🎓"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"difference","l3zh":"n.差别；差异","img":"emoji:↔️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"yourself","l3zh":"pron.你自己；你们自己","img":"emoji:👤"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"anyone","l3zh":"pron.任何人","img":"emoji:👤"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"possible","l3zh":"adj.可能存在的","img":"emoji:🤔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"future","l3zh":"n.将来；前途；前景","img":"emoji:🔮"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"monitor","l3zh":"n.班长；课代表；监视器","img":"emoji:📋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"primary","l3zh":"adj.小学教育的；主要的；基本的","img":"emoji:1️⃣"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"choose","l3zh":"v.选择；挑选","img":"emoji:👆"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"better","l3zh":"adj.更好的；较好的","img":"emoji:👍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"junior","l3zh":"n.青少年","img":"emoji:🧒"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"progress","l3zh":"n.进步；进展","img":"emoji:📈"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"practice","l3zh":"n.练习；训练；实习 v.实践；练习","img":"emoji:🏋️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"teach","l3zh":"v.教；讲授；教导","img":"emoji:👨‍🏫"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"nothing","l3zh":"pron.没有什么；没有一件东西","img":"emoji:🚫"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"tonight","l3zh":"adv.今晚；在今晚 n.今夜；今晚","img":"emoji:🌙"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"countryside","l3zh":"n.乡村","img":"emoji:🌾"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"pick","l3zh":"v.摘；采；选择","img":"emoji:🤏"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"afraid","l3zh":"adj.害怕；担心","img":"emoji:😱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"quickly","l3zh":"adv.很快地；迅速地","img":"emoji:⚡"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"survey","l3zh":"n.民意调查；（对……）做民意调查","img":"emoji:📊"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"relax","l3zh":"v.放松；使冷静","img":"emoji:😌"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"seldom","l3zh":"adv.很少；不常","img":"emoji:⏳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"mind","l3zh":"n.头脑；心思；注意；介意","img":"emoji:🧠"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"active","l3zh":"adj.积极的；起作用的","img":"emoji:⚡"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"instrument","l3zh":"n.乐器；工具","img":"emoji:🎸"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"still","l3zh":"adv.安静的；静止的；仍然；更","img":"emoji:🧍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"inside","l3zh":"prep.在（或向）里面；在……内","img":"emoji:📦"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"anywhere","l3zh":"adv.在任何地方","img":"emoji:🌍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"earphone","l3zh":"n.耳机","img":"https://s.alicdn.com/@sc04/kf/H24e7aaa10c504ca88b7b309db91504eeC.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"bored","l3zh":"adj.厌烦的；郁闷的","img":"emoji:😐"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"acting","l3zh":"n.表演；演艺","img":"emoji:🎭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"improve","l3zh":"v.改善；改进","img":"emoji:📈"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"role-play","l3zh":"n.角色扮演","img":"emoji:🎭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"act","l3zh":"v.扮演（戏剧、电影的角色）；行动；起作用","img":"emoji:🎭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"theatre","l3zh":"n.剧院；电影院","img":"emoji:🎭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"if","l3zh":"conj.如果；若是；即使","img":"emoji:🔀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"fill","l3zh":"v.填满；装满；使充满","img":"emoji:🫙"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"form","l3zh":"n.表格；形式；类型；产生","img":"emoji:📋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"weekday","l3zh":"n.周日；工作日","img":"emoji:📅"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit3 Learning to learn","l2zh":"Unit3 Learning to learn","l3en":"shape","l3zh":"n.外形；形状；情况；塑造；影响……的发展","img":"emoji:🔷"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"chalk","l3zh":"n.粉笔","img":"https://s.alicdn.com/@sc04/kf/H4ecc140d10614bf78239944e0f47c2f6r.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"self","l3zh":"n.(指一个人)自己；自我","img":"emoji:👤"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"interest","l3zh":"n.兴趣；趣味；利益","img":"emoji:⭐"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"agree","l3zh":"v.同意；赞成；商定","img":"emoji:👍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"care","l3zh":"v.关心；关注；担忧 n.照顾；小心；忧虑","img":"emoji:💗"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"understand","l3zh":"v.理解；谅解","img":"emoji:🧠"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"friendship","l3zh":"n.友谊；友好","img":"emoji:🤝"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"argument","l3zh":"n.争论；争吵","img":"emoji:💢"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"hit","l3zh":"v.（用手或器具）击；打","img":"emoji:👊"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"decide","l3zh":"v.决定；选定","img":"emoji:🤔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"bath","l3zh":"n.洗浴；浴缸","img":"emoji:🛁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"sudden","l3zh":"adj.突然的；意外的 n.突然发生的事","img":"emoji:⚡"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"could","l3zh":"aux.能够","img":"emoji:🤔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"trouble","l3zh":"n.困境；麻烦；问题 v.使苦恼；使忧虑","img":"emoji:⚠️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"breathe","l3zh":"v.呼吸；呼出","img":"emoji:🌬️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"luckily","l3zh":"adv.幸运地","img":"emoji:🍀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"save","l3zh":"v.救；挽救；储蓄；保存","img":"emoji:💾"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"flat","l3zh":"adj.平滑的；平坦的 n.公寓","img":"emoji:🏢"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"someone","l3zh":"pron.某人","img":"emoji:👤"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"hurtful","l3zh":"adj.伤感情的","img":"emoji:💔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"wind","l3zh":"n.风；气流","img":"emoji:💨"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"blow","l3zh":"v.吹；破裂","img":"emoji:💨"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"erase","l3zh":"v.清除；擦掉；抹去","img":"emoji:🧽"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"terrible","l3zh":"adj.可怕的；非常严重的","img":"emoji:😱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"happen","l3zh":"v.(尤指偶然)发生；碰巧","img":"emoji:⚡"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"lose","l3zh":"v.失去；失败；使迷路","img":"emoji:😞"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"donate","l3zh":"v.捐赠；赠送；捐献","img":"emoji:🎁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"stone","l3zh":"n.石头；石块","img":"emoji:🪨"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"lucky","l3zh":"adj.幸运的；有好运的","img":"emoji:🍀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"raise","l3zh":"v.筹募；提升；养育","img":"emoji:📈"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"change","l3zh":"v.变化；改变；交换 n.变化；替代","img":"emoji:🔄"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"shy","l3zh":"adj.羞怯的；胆小的","img":"emoji:😳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"ever","l3zh":"adv.曾经；一次 conj.一旦；一……就","img":"emoji:⏳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"lonely","l3zh":"adj.孤独的；偏僻的","img":"emoji:🥺"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit4 My friends","l2zh":"Unit4 My friends","l3en":"develop","l3zh":"v.发展；开发；研制","img":"emoji:📈"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"neighbourhood","l3zh":"n.街区；城区","img":"emoji:🏘️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"neighbour","l3zh":"n.邻居；邻国","img":"emoji:🤝"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"seem","l3zh":"v.似乎；看来","img":"emoji:👀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"everywhere","l3zh":"adv.&pron.处处；到处；所有地方","img":"emoji:🌍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"square","l3zh":"n.广场；四方形；平方 adj.四方形的","img":"emoji:⬛"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"corner","l3zh":"n.拐角；角落；街角","img":"emoji:📐"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"bank","l3zh":"n.银行；岸","img":"emoji:🏦"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"restaurant","l3zh":"n.饭店；餐馆","img":"emoji:🍽️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"supermarket","l3zh":"n.超市","img":"emoji:🛒"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"bookstore","l3zh":"n.书店","img":"emoji:📚"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"museum","l3zh":"n.博物馆","img":"emoji:🏛️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"theatre","l3zh":"n.剧院；电影院","img":"emoji:🎭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"hospital","l3zh":"n.医院","img":"emoji:🏥"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"post office","l3zh":"n.邮局","img":"emoji:📮"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"across","l3zh":"prep.横过；穿过","img":"emoji:↔️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"through","l3zh":"prep.穿过；通过","img":"emoji:➡️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"opposite","l3zh":"prep.在……对面 adj.相反的","img":"emoji:🔄"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"beside","l3zh":"prep.在……旁边","img":"emoji:↔️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"between","l3zh":"prep.在两者之间","img":"emoji:↔️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"next to","l3zh":"紧挨着","img":"emoji:📍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"in front of","l3zh":"在……前面","img":"emoji:📍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"behind","l3zh":"prep.在……后面","img":"emoji:🙈"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"turn left","l3zh":"向左转","img":"emoji:↩️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"turn right","l3zh":"向右转","img":"emoji:↪️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"crossing","l3zh":"n.十字路口","img":"emoji:🚸"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"direction","l3zh":"n.方向","img":"emoji:🧭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"distance","l3zh":"n.距离；间距","img":"emoji:📏"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"far","l3zh":"adj.远的","img":"emoji:📏"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"near","l3zh":"prep.在……附近","img":"emoji:📍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"walk","l3zh":"v.步行；散步","img":"emoji:🚶"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"drive","l3zh":"v.驾驶；开车","img":"emoji:🚗"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"bus","l3zh":"n.公共汽车","img":"emoji:🚌"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"train","l3zh":"n.火车","img":"emoji:🚆"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"subway","l3zh":"n.地铁","img":"emoji:🚇"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"ticket","l3zh":"n.票","img":"emoji:🎫"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"price","l3zh":"n.价格","img":"emoji:💰"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"map","l3zh":"n.地图","img":"https://s.alicdn.com/@sc04/kf/H49b728a1bf00441c80ffd92382b9ad2cD.png_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"guide","l3zh":"n.导游；向导","img":"emoji:🧭"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"visit","l3zh":"v.参观；拜访","img":"emoji:🏛️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"place","l3zh":"n.地方","img":"emoji:📍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"trip","l3zh":"n.旅行","img":"emoji:🧳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit5 Our neighbourhood","l2zh":"Unit5 Our neighbourhood","l3en":"travel","l3zh":"v.&n.旅行","img":"emoji:🧳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"food","l3zh":"n.食物","img":"emoji:🍽️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"meal","l3zh":"n.一餐；一顿饭","img":"emoji:🍽️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"breakfast","l3zh":"n.早餐","img":"emoji:🍳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"lunch","l3zh":"n.午餐","img":"emoji:🍱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"dinner","l3zh":"n.晚餐","img":"emoji:🍽️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"snack","l3zh":"n.小吃；点心","img":"emoji:🍿"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"fruit","l3zh":"n.水果","img":"emoji:🍎"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"vegetable","l3zh":"n.蔬菜","img":"emoji:🥦"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"meat","l3zh":"n.肉","img":"emoji:🥩"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"fish","l3zh":"n.鱼；鱼肉","img":"https://s.alicdn.com/@sc04/kf/Ab4494f37821040598309658d5c2a254fo.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"chicken","l3zh":"n.鸡肉","img":"emoji:🐔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"rice","l3zh":"n.米饭","img":"emoji:🍚"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"noodle","l3zh":"n.面条","img":"emoji:🍜"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"bread","l3zh":"n.面包","img":"emoji:🍞"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"egg","l3zh":"n.鸡蛋","img":"emoji:🥚"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"milk","l3zh":"n.牛奶","img":"emoji:🥛"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"juice","l3zh":"n.果汁","img":"emoji:🧃"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"water","l3zh":"n.水","img":"emoji:💧"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"tea","l3zh":"n.茶","img":"emoji:🍵"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"coffee","l3zh":"n.咖啡","img":"emoji:☕"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"cake","l3zh":"n.蛋糕","img":"emoji:🎂"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"cookie","l3zh":"n.饼干","img":"emoji:🍪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"ice cream","l3zh":"n.冰淇淋","img":"emoji:🍦"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"delicious","l3zh":"adj.美味的","img":"emoji:😋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"tasty","l3zh":"adj.可口的","img":"emoji:😋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"sweet","l3zh":"adj.甜的","img":"emoji:🍬"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"sour","l3zh":"adj.酸的","img":"emoji:🍋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"salty","l3zh":"adj.咸的","img":"emoji:🧂"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"fresh","l3zh":"adj.新鲜的","img":"emoji:🥬"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"healthy","l3zh":"adj.健康的","img":"emoji:💪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"unhealthy","l3zh":"adj.不健康的","img":"emoji:🍔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"diet","l3zh":"n.日常饮食；节食","img":"emoji:🥗"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"cook","l3zh":"v.烹饪；煮 n.厨师","img":"emoji:🍳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"cooking","l3zh":"n.烹饪；烹调","img":"emoji:🍳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"wash","l3zh":"v.洗","img":"emoji:🧼"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"cut","l3zh":"v.切；割","img":"emoji:🔪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"add","l3zh":"v.添加；增加","img":"emoji:➕"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"mix","l3zh":"v.混合","img":"emoji:🌀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"boil","l3zh":"v.煮沸；烧开","img":"emoji:🫕"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"fry","l3zh":"v.油炸","img":"emoji:🍳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"bake","l3zh":"v.烘烤","img":"emoji:🥖"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"prepare","l3zh":"v.准备","img":"emoji:🧑‍🍳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"help","l3zh":"v.帮助","img":"emoji:🆘"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"shop","l3zh":"v.购物 n.商店","img":"emoji:🛍️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"market","l3zh":"n.市场","img":"emoji:🏪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"supermarket","l3zh":"n.超市","img":"emoji:🛒"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"restaurant","l3zh":"n.餐馆","img":"emoji:🍽️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"menu","l3zh":"n.菜单","img":"emoji:📋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"order","l3zh":"v.订购；点菜 n.订单","img":"emoji:📝"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"pay","l3zh":"v.支付；付款","img":"emoji:💳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"cost","l3zh":"v.花费 n.成本；价钱","img":"emoji:💰"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"cheap","l3zh":"adj.便宜的","img":"emoji:🏷️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"expensive","l3zh":"adj.昂贵的","img":"emoji:💎"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"enough","l3zh":"adj.足够的","img":"emoji:✅"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"too","l3zh":"adv.太；也","img":"emoji:🔁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"rather","l3zh":"adv.相当；宁愿","img":"emoji:⚖️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"special","l3zh":"adj.特别的；特殊的","img":"emoji:⭐"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"popular","l3zh":"adj.受欢迎的；流行的","img":"emoji:🔥"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"local","l3zh":"adj.本地的；当地的","img":"emoji:📍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"traditional","l3zh":"adj.传统的","img":"emoji:🏛️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"culture","l3zh":"n.文化","img":"emoji:🏛️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit6 Enjoying food","l2zh":"Unit6 Enjoying food","l3en":"custom","l3zh":"n.习俗；风俗","img":"emoji:🎎"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"health","l3zh":"n.健康；医疗","img":"emoji:❤️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"healthy","l3zh":"adj.健康的","img":"emoji:💪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"unhealthy","l3zh":"adj.不健康的","img":"emoji:🍔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"habit","l3zh":"n.习惯；习性","img":"emoji:🔁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"usual","l3zh":"adj.通常的；寻常的","img":"emoji:🔁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"become","l3zh":"v.变成；开始变得","img":"emoji:🦋"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"awful","l3zh":"adj.可怕的；很坏的","img":"emoji:😱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"poor","l3zh":"adj.可怜的；贫穷的","img":"emoji:😢"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"balanced","l3zh":"adj.保持平衡的","img":"emoji:⚖️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"diet","l3zh":"n.日常饮食；规定饮食；节食","img":"emoji:🥗"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"weight","l3zh":"n.重量；重物；重任；使负重","img":"emoji:⚖️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"couch","l3zh":"n.长沙发；长榻","img":"https://s.alicdn.com/@sc04/kf/Ha897d23ea49e4fbeb89fe96ae3e4f09eK.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"arrive","l3zh":"v.到达；送到；发生","img":"emoji:🏁"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"badminton","l3zh":"n.羽毛球运动","img":"https://s.alicdn.com/@sc04/kf/Ha35f55f3f9ad4c7fa26ca035351b83235.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"tennis","l3zh":"n.网球","img":"https://s.alicdn.com/@sc04/kf/H372c52acc3474ebca2c29e008c95d44cN.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"refresh","l3zh":"v.使恢复精力；刷新","img":"emoji:🔄"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"sleepy","l3zh":"adj.困倦的；安静的","img":"emoji:😪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"spend","l3zh":"v.花（时间）；花（钱）；花销；花费","img":"emoji:💸"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"brain","l3zh":"n.脑；智力；聪明的人","img":"emoji:🧠"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"calm","l3zh":"adj.镇静的；沉着的 v.使平静；使镇静","img":"emoji:😌"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"screen","l3zh":"n.屏幕；荧光屏","img":"emoji:📱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"awake","l3zh":"adj.醒着的 v.(使)醒来；唤起","img":"emoji:👀"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"bedtime","l3zh":"n.就寝时间","img":"emoji:🌙"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"dark","l3zh":"adj.黑暗的；忧郁的 n.黑暗；暗色","img":"emoji:🌑"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"remember","l3zh":"v.记住；纪念","img":"emoji:🧠"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"rise","l3zh":"v.起床；上升；增加","img":"emoji:⬆️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"wealthy","l3zh":"adj.富有的","img":"emoji:💰"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"wise","l3zh":"adj.明智的；英明的","img":"emoji:🦉"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"lifestyle","l3zh":"n.生活方式；工作方式","img":"emoji:🌿"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"diary","l3zh":"n.日记；记事簿","img":"emoji:📔"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"effort","l3zh":"n.努力；尽力；成就","img":"emoji:💪"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"physical","l3zh":"adj.身体的；物质的","img":"emoji:🏃"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"include","l3zh":"v.包含；包括","img":"emoji:📦"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"plenty","l3zh":"pron.&adv.大量；充足","img":"emoji:🔢"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"single","l3zh":"adj.单一的；单身的","img":"emoji:1️⃣"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"pizza","l3zh":"n.比萨饼","img":"emoji:🍕"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"less","l3zh":"adv.较少；较小","img":"emoji:⬇️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"choice","l3zh":"n.选择；挑选；选择权","img":"emoji:✅"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"huge","l3zh":"adj.巨大的；极多的","img":"emoji:🐘"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"truth","l3zh":"n.事实；真相；真实","img":"emoji:💡"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit7 Keep healthy","l2zh":"Unit7 Keep healthy","l3en":"surprising","l3zh":"adj.出人意料的；令人吃惊的；奇怪的","img":"emoji:😲"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"nature","l3zh":"n.大自然；自然界","img":"emoji:🌿"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"animal","l3zh":"n.动物","img":"emoji:🐾"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"plant","l3zh":"n.植物 v.种植","img":"emoji:🌱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"tree","l3zh":"n.树","img":"emoji:🌳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"flower","l3zh":"n.花","img":"emoji:🌸"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"grass","l3zh":"n.草","img":"emoji:🌱"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"forest","l3zh":"n.森林","img":"emoji:🌲"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"river","l3zh":"n.河流","img":"emoji:🌊"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"lake","l3zh":"n.湖泊","img":"emoji:🏞️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"sea","l3zh":"n.大海","img":"emoji:🌊"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"ocean","l3zh":"n.海洋","img":"emoji:🌊"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"mountain","l3zh":"n.山；山脉","img":"emoji:⛰️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"hill","l3zh":"n.小山","img":"emoji:⛰️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"island","l3zh":"n.岛屿","img":"emoji:🏝️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"beach","l3zh":"n.海滩","img":"emoji:🏖️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"sky","l3zh":"n.天空","img":"emoji:🌌"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"sun","l3zh":"n.太阳","img":"emoji:☀️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"moon","l3zh":"n.月亮","img":"emoji:🌙"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"star","l3zh":"n.星星","img":"emoji:⭐"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"cloud","l3zh":"n.云","img":"emoji:☁️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"wind","l3zh":"n.风","img":"emoji:💨"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"rain","l3zh":"n.雨 v.下雨","img":"emoji:🌧️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"snow","l3zh":"n.雪 v.下雪","img":"emoji:❄️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"season","l3zh":"n.季节","img":"emoji:🍂"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"spring","l3zh":"n.春天","img":"emoji:🌸"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"summer","l3zh":"n.夏天","img":"emoji:☀️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"autumn","l3zh":"n.秋天","img":"emoji:🍂"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"winter","l3zh":"n.冬天","img":"emoji:❄️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"weather","l3zh":"n.天气","img":"emoji:🌤️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"sunny","l3zh":"adj.晴朗的","img":"emoji:☀️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"rainy","l3zh":"adj.下雨的","img":"emoji:🌧️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"windy","l3zh":"adj.刮风的","img":"emoji:💨"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"snowy","l3zh":"adj.下雪的","img":"emoji:❄️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"cloudy","l3zh":"adj.多云的","img":"emoji:☁️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"warm","l3zh":"adj.温暖的","img":"emoji:🌞"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"hot","l3zh":"adj.炎热的","img":"emoji:🔥"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"cool","l3zh":"adj.凉爽的","img":"emoji:😎"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"cold","l3zh":"adj.寒冷的","img":"emoji:🧊"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"wild","l3zh":"adj.野生的","img":"emoji:🌿"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"protect","l3zh":"v.保护","img":"emoji:🛡️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"save","l3zh":"v.拯救；节约","img":"emoji:💾"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"danger","l3zh":"n.危险","img":"emoji:⚠️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"dangerous","l3zh":"adj.危险的","img":"emoji:⚠️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"safe","l3zh":"adj.安全的","img":"emoji:🛡️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"pollution","l3zh":"n.污染","img":"emoji:☠️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"pollute","l3zh":"v.污染","img":"emoji:☠️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"waste","l3zh":"n.废物；垃圾 v.浪费","img":"emoji:🗑️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"recycle","l3zh":"v.回收再利用","img":"emoji:♻️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"plastic","l3zh":"n.塑料 adj.塑料的","img":"emoji:🧴"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"metal","l3zh":"n.金属","img":"emoji:🔩"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"paper","l3zh":"n.纸","img":"emoji:📄"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"glass","l3zh":"n.玻璃","img":"emoji:🥛"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"earth","l3zh":"n.地球；大地","img":"emoji:🌍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"environment","l3zh":"n.环境","img":"emoji:🌍"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"care","l3zh":"v.&n.爱护；关心","img":"emoji:💗"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"care for","l3zh":"照顾；爱护","img":"emoji:💗"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"enjoy","l3zh":"v.欣赏；享受","img":"emoji:😊"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"beautiful","l3zh":"adj.美丽的","img":"emoji:🌸"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"wonderful","l3zh":"adj.极好的","img":"emoji:🎉"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"interesting","l3zh":"adj.有趣的","img":"emoji:🤩"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"amazing","l3zh":"adj.令人惊奇的","img":"emoji:🤩"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"peaceful","l3zh":"adj.宁静的；和平的","img":"emoji:🕊️"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"outdoors","l3zh":"adv.在户外","img":"emoji:🌳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"picnic","l3zh":"n.野餐","img":"emoji:🧺"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"trip","l3zh":"n.旅行","img":"emoji:🧳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"travel","l3zh":"v.&n.旅行","img":"emoji:🧳"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"camp","l3zh":"n.营地 v.露营","img":"emoji:⛺"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"tent","l3zh":"n.帐篷","img":"emoji:⛺"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"hike","l3zh":"v.远足；徒步旅行","img":"emoji:🥾"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"fish","l3zh":"v.钓鱼 n.鱼","img":"https://s.alicdn.com/@sc04/kf/Ab4494f37821040598309658d5c2a254fo.jpg_640x640.jpg"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"bird-watch","l3zh":"v.观鸟","img":"emoji:🐦"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"learn","l3zh":"v.学习","img":"emoji:📚"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"know","l3zh":"v.了解；知道","img":"emoji:🧠"},{"l1en":"七年级下册","l1zh":"七年级下册","l2en":"Unit8 I love nature","l2zh":"Unit8 I love nature","l3en":"understand","l3zh":"v.理解","img":"emoji:🧠"}];
+</script>
+<script>
+(function(){
+"use strict";
+var ALL = window.CATALOG || [];
+var state = {
+  mode: "en2zh",      // en2zh | zh2en
+  order: "seq",       // seq | rand
+  cat: "all",         // 当前筛选的一级类目（zh 名）
+  idx: 0,
+  deck: [],           // 当前筛选后的记录索引（在 ALL 中的下标）
+  flipped: false,
+  autoOn: false,
+  autoTimer: null,
+  speaking: false
+};
+
+/* ---------- DOM ---------- */
+var $ = function(id){ return document.getElementById(id); };
+var elCard=$("card"), elScene=$("scene"), elFrontText=$("frontText"), elBackText=$("backText");
+var elFrontPath=$("frontPath"), elBackPath=$("backPath"), elTagsFront=$("tagsFront"), elTagsBack=$("tagsBack");
+var elCornerFront=$("cornerFront"), elFrontHint=$("frontHint"), elFrontPathLabel=$("frontPathLabel");
+var elFrontImgWrap=$("frontImgWrap"), elFrontImg=$("frontImg"), elFrontEmoji=$("frontEmoji"), elWatermark=$("watermark");
+var elPfill=$("pfill"), elPcur=$("pcur"), elPinfo=$("pinfo");
+var elChips=$("chips"), elModeBtn=$("modeBtn"), elOrderBtn=$("orderBtn"), elAutoBtn=$("autoBtn");
+var elSpeak=$("speakBtn"), elPrev=$("prevBtn"), elNext=$("nextBtn"), elLang=$("langBtn");
+var elToast=$("toast");
+
+/* ---------- 语音 ---------- */
+var voices=[];
+var SPEAK_GAP = 1000;   // 单词间隔 1 秒
+var speakGen = 0;       // 朗读代次，用于中断旧朗读链
+function loadVoices(){
+  voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+}
+if ("speechSynthesis" in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function pickVoice(lang){
+  var exact = lang.toLowerCase();
+  var preferred = {
+    "en-gb": ["daniel", "kate", "arthur", "serena", "oliver", "moira", "libby", "sonia", "thomas", "google uk english"],
+    "en-us": ["google us english", "samantha", "alex", "ava", "allison"],
+    "zh-cn": ["ting-ting", "xiaoxiao", "huihui", "meijia", "yaoyao", "google 普通话"]
+  };
+  var list = preferred[exact] || [];
+  for (var i=0;i<list.length;i++){
+    for (var j=0;j<voices.length;j++){
+      if (voices[j].name && voices[j].name.toLowerCase().indexOf(list[i])!==-1) return voices[j];
+    }
+  }
+  for (var j=0;j<voices.length;j++){
+    if (voices[j].lang && voices[j].lang.toLowerCase().indexOf(exact)===0) return voices[j];
+  }
+  var p = lang.split("-")[0];
+  for (var j=0;j<voices.length;j++){
+    if (voices[j].lang && voices[j].lang.toLowerCase().indexOf(p)===0) return voices[j];
+  }
+  return null;
+}
+function stopSpeaking(){
+  speakGen++;
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  if (audioBusy){
+    audioBusy = false;
+    audioEl.pause();
+    audioEl.onended = audioEl.onerror = audioEl.oncanplay = null;
+    audioEl.removeAttribute("src");
+  }
+  elSpeak.classList.remove("speaking");
+}
+/* 整句朗读（中文等） */
+function speakText(text, lang, onDone){
+  if (!("speechSynthesis" in window)){ toast("此浏览器不支持朗读，请点右上角···在浏览器中打开"); if (onDone) onDone(); return; }
+  var gen = ++speakGen;
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = 0.92;
+  u.pitch = 1;
+  var v = pickVoice(lang);
+  if (v) u.voice = v;
+  u.onstart = function(){ elSpeak.classList.add("speaking"); };
+  u.onend = u.onerror = function(){
+    if (gen !== speakGen) return;
+    elSpeak.classList.remove("speaking");
+    if (onDone) onDone();
+  };
+  setTimeout(function(){
+    if (gen !== speakGen) return;
+    if ("speechSynthesis" in window) speechSynthesis.resume();
+    speechSynthesis.speak(u);
+  }, 120);
+}
+/* 逐词朗读：跳过 &，词间间隔 SPEAK_GAP 毫秒 */
+/* 朗读分组：按 & 拆分，组内连读（词组），组间间隔 SPEAK_GAP */
+function speakByGroups(groups, lang, onDone){
+  if (!groups.length){ if (onDone) onDone(); return; }
+  if (!("speechSynthesis" in window)){ toast("此浏览器不支持朗读，请点右上角···在浏览器中打开"); if (onDone) onDone(); return; }
+  var gen = ++speakGen;
+  speechSynthesis.cancel();
+  var i = 0;
+  function begin(){
+    if (gen !== speakGen) return;
+    elSpeak.classList.add("speaking");
+    if ("speechSynthesis" in window) speechSynthesis.resume();
+    next();
+  }
+  function next(){
+    if (gen !== speakGen) return;
+    if (i >= groups.length){
+      elSpeak.classList.remove("speaking");
+      if (onDone) onDone();
+      return;
+    }
+    var g = groups[i++];
+    var u = new SpeechSynthesisUtterance(g);
+    u.lang = lang;
+    u.rate = 0.9;
+    u.pitch = 1;
+    var v = pickVoice(lang);
+    if (v){
+      u.voice = v;
+      if (lang.indexOf("en")===0 && !window.__voiceNotified){
+        window.__voiceNotified = true;
+        toast("英式发音："+v.name);
+      }
+    }
+    u.onend = u.onerror = function(){
+      if (gen !== speakGen) return;
+      if (i < groups.length){
+        setTimeout(next, SPEAK_GAP);
+      } else {
+        next();
+      }
+    };
+    speechSynthesis.speak(u);
+  }
+  setTimeout(begin, 120);
+}
+function splitGroups(en){
+  return String(en).split("&").map(function(g){
+    return g.replace(/\s+/g, " ").trim();
+  }).filter(function(g){ return g.length > 0; });
+}
+var audioEl = new Audio();
+var audioBusy = false;
+function pad5(n){ return ("00000"+n).slice(-5); }
+function playAudio(url, onOk, onFail){
+  audioBusy = true;
+  elSpeak.classList.add("speaking");
+  var finished = false;
+  function done(ok){
+    if (finished) return;
+    finished = true;
+    audioBusy = false;
+    elSpeak.classList.remove("speaking");
+    audioEl.onended = audioEl.onerror = audioEl.oncanplay = null;
+    audioEl.removeAttribute("src");
+    if (ok && onOk) onOk();
+    else if (!ok && onFail) onFail();
+  }
+  audioEl.onended = function(){ done(true); };
+  audioEl.onerror = function(){ done(false); };
+  audioEl.oncanplay = function(){
+    audioEl.play().catch(function(){ done(false); });
+  };
+  audioEl.src = url;
+  setTimeout(function(){
+    if (!finished && audioEl.readyState < 3){ done(false); }
+  }, 4000);
+}
+function speakCurrent(onDone){
+  var r = ALL[state.deck[state.idx]];
+  if (!r) return;
+  var idx = state.deck[state.idx];
+  var isEn;
+  if (state.flipped){
+    isEn = state.mode !== "en2zh";
+  } else {
+    isEn = state.mode === "en2zh";
+  }
+  if (!isEn){
+    if (state.flipped){ speakText(r.l1zh+"，"+r.l2zh+"，"+r.l3zh, "zh-CN", onDone); }
+    else { speakText(r.l3zh, "zh-CN", onDone); }
+    return;
+  }
+  /* 英文：优先播放预生成音频（微信内也可发声），失败回退 TTS */
+  stopSpeaking();
+  var url = "audio/" + pad5(idx) + ".m4a";
+  playAudio(url, function(){ if (onDone) onDone(); }, function(){
+    if (state.flipped){ speakByGroups(splitGroups(r.l1en+" "+r.l2en+" "+r.l3en), "en-GB", onDone); }
+    else { speakByGroups(splitGroups(r.l3en), "en-GB", onDone); }
+  });
+}
+
+/* ---------- 筛选 chips ---------- */
+function buildChips(){
+  var cats = [];
+  var seen = {};
+  for (var i=0;i<ALL.length;i++){
+    var k = ALL[i].l2zh;
+    if (!seen[k]){ seen[k]=true; cats.push({zh:k, en:ALL[i].l2en, n:1}); }
+    else { for (var j=0;j<cats.length;j++) if (cats[j].zh===k) cats[j].n++; }
+  }
+  var html = '<div class="chip on" data-cat="all">全部 <b>'+ALL.length+'</b></div>';
+  for (var c=0;c<cats.length;c++){
+    html += '<div class="chip" data-cat="'+cats[c].zh+'">'+cats[c].zh+' <b>'+cats[c].n+'</b></div>';
+  }
+  elChips.innerHTML = html;
+  elChips.addEventListener("click", function(e){
+    var chip = e.target.closest(".chip");
+    if (!chip) return;
+    var cat = chip.getAttribute("data-cat");
+    if (cat === state.cat) return;
+    state.cat = cat;
+    var all = elChips.querySelectorAll(".chip");
+    for (var i=0;i<all.length;i++) all[i].classList.remove("on");
+    chip.classList.add("on");
+    buildDeck();
+  });
+}
+
+/* ---------- deck ---------- */
+function buildDeck(){
+  stopSpeaking();
+  state.deck = [];
+  for (var i=0;i<ALL.length;i++){
+    if (state.cat==="all" || ALL[i].l2zh===state.cat) state.deck.push(i);
+  }
+  if (state.order==="rand") shuffle(state.deck);
+  state.idx = 0;
+  state.flipped = false;
+  elCard.classList.remove("flip");
+  render();
+}
+function shuffle(a){
+  for (var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t=a[i]; a[i]=a[j]; a[j]=t;
+  }
+}
+function nextIdx(){
+  if (state.order==="rand") return Math.floor(Math.random()*state.deck.length);
+  return (state.idx+1)%state.deck.length;
+}
+
+/* ---------- render ---------- */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function render(){
+  if (!state.deck.length){ toast("当前分类无数据"); return; }
+  var r = ALL[state.deck[state.idx]];
+  var en2zh = state.mode==="en2zh";
+
+  elFrontText.textContent = en2zh ? r.l3en : r.l3zh;
+  elBackText.textContent  = en2zh ? r.l3zh : r.l3en;
+  elFrontPath.innerHTML = en2zh
+    ? esc(r.l1en)+'<span class="arrow">›</span>'+esc(r.l2en)
+    : esc(r.l1zh)+'<span class="arrow">›</span>'+esc(r.l2zh);
+  elBackPath.innerHTML = en2zh
+    ? esc(r.l1zh)+'<span class="arrow">›</span>'+esc(r.l2zh)+'<span class="arrow">›</span>'+esc(r.l3zh)
+    : esc(r.l1en)+'<span class="arrow">›</span>'+esc(r.l2en)+'<span class="arrow">›</span>'+esc(r.l3en);
+
+  elTagsFront.innerHTML = en2zh
+    ? '<span class="tag">'+esc(r.l1en)+'</span><span class="tag">'+esc(r.l2en)+'</span>'
+    : '<span class="tag">'+esc(r.l1zh)+'</span><span class="tag">'+esc(r.l2zh)+'</span>';
+  elTagsBack.innerHTML  = '<span class="tag acc">'+esc(r.l3en)+'</span>';
+  elCornerFront.textContent = en2zh ? "英 → 中" : "中 → 英";
+  updateLangBtn();
+  if (r.img){
+    elFrontImgWrap.classList.remove("hide");
+    if (r.img.indexOf("emoji:") === 0){
+      elFrontImg.classList.add("hide");
+      elFrontImg.removeAttribute("src");
+      elFrontEmoji.classList.remove("hide");
+      elFrontEmoji.textContent = r.img.slice(6);
+    } else {
+      elFrontImg.classList.remove("hide");
+      elFrontEmoji.classList.add("hide");
+      elFrontEmoji.textContent = "";
+      elFrontImg.src = r.img;
+    }
+  } else {
+    elFrontImgWrap.classList.add("hide");
+    elFrontImg.removeAttribute("src");
+    elFrontEmoji.classList.add("hide");
+  }
+  if (r.img){
+    elWatermark.classList.remove("hide");
+  } else {
+    elWatermark.classList.add("hide");
+  }
+  elFrontHint.textContent = en2zh ? "Tap to flip · 🔊 word by word" : "点击卡片查看英文 · 点 🔊 逐词跟读";
+  elFrontPathLabel.textContent = en2zh ? "PATH" : "所属路径";
+
+  var n = state.deck.length;
+  var pct = n ? Math.round((state.idx+1)/n*100) : 0;
+  elPfill.style.width = pct+"%";
+  elPcur.textContent = (state.idx+1)+" / "+n;
+  elPinfo.textContent = state.cat==="all" ? "全部" : state.cat;
+}
+function flipCard(){
+  state.flipped = !state.flipped;
+  elCard.classList.toggle("flip", state.flipped);
+  if (state.autoOn){ scheduleAuto(); }
+}
+
+/* ---------- 自动播放（朗读驱动） ---------- */
+function stopAuto(){
+  state.autoOn = false;
+  elAutoBtn.textContent = "▶";
+  elAutoBtn.classList.remove("on");
+  if (state.autoTimer){ clearTimeout(state.autoTimer); state.autoTimer=null; }
+  stopSpeaking();
+}
+function scheduleAuto(){
+  if (!state.autoOn) return;
+  if (state.autoTimer) clearTimeout(state.autoTimer);
+  if (state.flipped){
+    // 背面阶段：朗读答案，2.6s 后下一张
+    speakCurrent(function(){});
+    state.autoTimer = setTimeout(function(){
+      elCard.classList.remove("flip");
+      state.flipped = false;
+      state.idx = nextIdx();
+      render();
+      scheduleAuto();
+    }, 2600);
+  } else {
+    // 正面阶段：逐词朗读英文（3s 间隔），完成后 1.2s 翻面
+    speakCurrent(function(){
+      if (!state.autoOn) return;
+      state.autoTimer = setTimeout(function(){
+        elCard.classList.add("flip");
+        state.flipped = true;
+        scheduleAuto();
+      }, 1200);
+    });
+  }
+}
+function toggleAuto(){
+  state.autoOn = !state.autoOn;
+  if (state.autoOn){
+    elAutoBtn.textContent = "⏸";
+    elAutoBtn.classList.add("on");
+    if (state.flipped){ elCard.classList.remove("flip"); state.flipped=false; }
+    scheduleAuto();
+    toast("自动播放中：自动翻面并朗读");
+  } else {
+    stopAuto();
+  }
+}
+
+/* ---------- 事件 ---------- */
+elCard.addEventListener("click", function(e){
+  if (e.target === elSpeak || elSpeak.contains(e.target)) return;
+  stopSpeaking();
+  flipCard();
+});
+elSpeak.addEventListener("click", function(e){
+  e.stopPropagation();
+  if (state.autoOn) return;
+  speakCurrent();
+});
+elNext.addEventListener("click", function(){
+  stopSpeaking();
+  state.idx = nextIdx();
+  state.flipped = false;
+  elCard.classList.remove("flip");
+  render();
+  if (state.autoOn) scheduleAuto();
+});
+elPrev.addEventListener("click", function(){
+  stopSpeaking();
+  state.idx = (state.idx-1+state.deck.length)%state.deck.length;
+  state.flipped = false;
+  elCard.classList.remove("flip");
+  render();
+  if (state.autoOn) scheduleAuto();
+});
+elLang.addEventListener("click", function(){
+  stopSpeaking();
+  state.mode = state.mode === "en2zh" ? "zh2en" : "en2zh";
+  elModeBtn.textContent = state.mode === "en2zh" ? "EN → 中" : "中 → EN";
+  if (state.flipped){ elCard.classList.remove("flip"); state.flipped = false; }
+  render();
+});
+function updateLangBtn(){
+  elLang.title = state.mode === "en2zh" ? "切换为中文+图片（当前英文）" : "切换为英文+图片（当前中文）";
+}
+elModeBtn.addEventListener("click", function(){
+  stopSpeaking();
+  state.mode = state.mode==="en2zh" ? "zh2en" : "en2zh";
+  elModeBtn.textContent = state.mode==="en2zh" ? "EN → 中" : "中 → EN";
+  if (state.flipped){ elCard.classList.remove("flip"); state.flipped=false; }
+  render();
+});
+elFrontImg.addEventListener("error", function(){ elFrontImgWrap.classList.add("hide"); });
+elFrontImg.addEventListener("load", function(){ elFrontImgWrap.classList.remove("hide"); });
+elOrderBtn.addEventListener("click", function(){
+  stopSpeaking();
+  state.order = state.order==="seq" ? "rand" : "seq";
+  elOrderBtn.textContent = state.order==="seq" ? "顺序" : "随机";
+  buildDeck();
+});
+elAutoBtn.addEventListener("click", toggleAuto);
+
+var elTtsBanner=$("ttsBanner"), elTtsClose=$("ttsClose");
+function checkTTS(){
+  if (!("speechSynthesis" in window)){
+    elTtsBanner.classList.remove("hide");
+  }
+}
+elTtsClose.addEventListener("click", function(){ elTtsBanner.classList.add("hide"); });
+
+document.addEventListener("visibilitychange", function(){
+  if (document.hidden) stopSpeaking();
+});
+
+/* 键盘支持（桌面） */
+document.addEventListener("keydown", function(e){
+  if (e.key==="ArrowRight" || e.key===" ") elNext.click();
+  else if (e.key==="ArrowLeft") elPrev.click();
+  else if (e.key==="Enter") flipCard();
+});
+
+/* ---------- toast ---------- */
+var toastTimer=null;
+function toast(msg){
+  elToast.textContent = msg;
+  elToast.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ elToast.classList.remove("show"); }, 2200);
+}
+
+/* ---------- 启动 ---------- */
+buildChips();
+buildDeck();
+checkTTS();
+})();
+</script>
+</body>
+</html>
